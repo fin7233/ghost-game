@@ -31,7 +31,7 @@ PINK  = ( 255, 182, 193 )
 # begin variable definitions --------------------
 
 LeftArrow=RightArrow=UpArrow=DownArrow=0
-
+x = y = 500
 speed = 5
 # loop until closed by user
 done = False
@@ -87,19 +87,19 @@ while not done:
 		# update joystick direction vars
 		joyDirX = currentJoystick.get_axis(0) * speed
 		joyDirY = currentJoystick.get_axis(1) * speed
+	
 	# clear screen
 	screen.fill(WHITE)
-
 	# begin logic code -------------------------------
 	# sum inputs and multiply by general speed
 	xSpeed = (LeftArrow+RightArrow)*speed
 	ySpeed = (UpArrow+DownArrow)*speed
 	# update position
-	x+=xSpeed
-	y+=ySpeed
+	x+=xSpeed+joyDirX
+	y+=ySpeed+joyDirY
 
 	# begin drawing code -----------------------------
-
+	drawChar(x,y)
 
 	# update screen with drawings
 	pygame.display.flip()
