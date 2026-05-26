@@ -31,13 +31,19 @@ PINK  = ( 255, 182, 193 )
 # begin variable definitions --------------------
 
 LeftArrow=RightArrow=UpArrow=DownArrow=0
-x = y = 500
-speed = 5
+x = y = 300
+speed = 8
+ghostSpeed = 5
 # loop until closed by user
 done = False
 
+ghosts = [[800,600],[300,600],[800,300]]
+for i in range (5):
+	randGhostX = random.randint(200,1080)
+	randGhostY = random.randint(100,700)
+	randGhostSpeed = random.randint(3,5)
+	ghosts.append([randGhostX,randGhostX,randGhostSpeed])
 
-# begin function definitions --------------------
 joysticks = []
 for i in range(pygame.joystick.get_count()):
         joystick = pygame.joystick.Joystick(i)
@@ -45,12 +51,28 @@ for i in range(pygame.joystick.get_count()):
         joysticks.append(joystick)
         print(f"found joystick: {joystick.get_name()}({joystick.get_id()})")
 
+# begin function definitions --------------------
+
 def drawChar(x,y):
 	pygame.draw.circle(screen, RED, (x,y), 40, 0)
 
+def drawGhosts():
+	for i in ghosts:
+		diffX = x-i[0]
+		diffY = y-i[1]
+		if x > i[0]:
+			i[0] += ghostSpeed
+		if x < i[0]:
+			i[0] -= ghostSpeed
+		if y > i[1]:
+			i[1] += ghostSpeed
+		if y < i[1]:
+			i[1] -= ghostSpeed
+		pygame.draw.circle(screen,GREEN, (i),30,0)
+
+
 # main program loop -----------------------------
 while not done:
-
 	for event in pygame.event.get(): # for user input
 		# event loop - all event processing goes here
 		if event.type == pygame.QUIT: # if closed by user
@@ -87,7 +109,6 @@ while not done:
 		# update joystick direction vars
 		joyDirX = currentJoystick.get_axis(0) * speed
 		joyDirY = currentJoystick.get_axis(1) * speed
-	
 	# clear screen
 	screen.fill(WHITE)
 	# begin logic code -------------------------------
@@ -100,7 +121,7 @@ while not done:
 
 	# begin drawing code -----------------------------
 	drawChar(x,y)
-
+	drawGhosts()
 	# update screen with drawings
 	pygame.display.flip()
 
