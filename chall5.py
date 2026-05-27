@@ -33,16 +33,52 @@ PINK  = ( 255, 182, 193 )
 LeftArrow=RightArrow=UpArrow=DownArrow=0
 x = y = 300
 speed = 8
-ghostSpeed = 5
 # loop until closed by user
 done = False
+# begin function definitions --------------------
 
-ghosts = [[800,600],[300,600],[800,300]]
+def randScreenPos(xOffset,yOffset):
+	randX = random.randint(xOffset,1280-xOffset)
+	randY = random.randint(yOffset,800-yOffset)
+	return (randX,randY)
+
+def drawChar(x,y):
+	pygame.draw.circle(screen, RED, (x,y), 40, 0)
+
+def drawPellets():
+	for i in pellets:
+		pygame.draw.circle(screen,BLUE, i, 10,0)
+
+
+def drawGhosts():
+	for i in ghosts:
+		ghostSpeedX = i[2]
+		ghostSpeedY = i[3]
+		diffX = x-i[0]
+		diffY = y-i[1]
+		if x > i[0]:
+			i[0] += ghostSpeedX
+		if x < i[0]:
+			i[0] -= ghostSpeedX
+		if y > i[1]:
+			i[1] += ghostSpeedY
+		if y < i[1]:
+			i[1] -= ghostSpeedY
+		pygame.draw.circle(screen,GREEN, (i[0],i[1]),30,0)
+
+
+
+ghosts = []
 for i in range (5):
-	randGhostX = random.randint(200,1080)
-	randGhostY = random.randint(100,700)
-	randGhostSpeed = random.randint(3,5)
-	ghosts.append([randGhostX,randGhostX,randGhostSpeed])
+	randGhostX,randGhostY = randScreenPos(100,80)
+	randGhostXSpeed = random.randint(5,7)
+	randGhostYSpeed = random.randint(2,4)
+	ghosts.append([randGhostX,randGhostY,randGhostXSpeed,randGhostYSpeed])
+
+pellets = []
+for i in range(3):
+	pelletX,pelletY = randScreenPos(5,5)
+	pellets.append([pelletX,pelletY])
 
 joysticks = []
 for i in range(pygame.joystick.get_count()):
@@ -50,26 +86,6 @@ for i in range(pygame.joystick.get_count()):
         joystick.init()
         joysticks.append(joystick)
         print(f"found joystick: {joystick.get_name()}({joystick.get_id()})")
-
-# begin function definitions --------------------
-
-def drawChar(x,y):
-	pygame.draw.circle(screen, RED, (x,y), 40, 0)
-
-def drawGhosts():
-	for i in ghosts:
-		diffX = x-i[0]
-		diffY = y-i[1]
-		if x > i[0]:
-			i[0] += ghostSpeed
-		if x < i[0]:
-			i[0] -= ghostSpeed
-		if y > i[1]:
-			i[1] += ghostSpeed
-		if y < i[1]:
-			i[1] -= ghostSpeed
-		pygame.draw.circle(screen,GREEN, (i),30,0)
-
 
 # main program loop -----------------------------
 while not done:
@@ -122,11 +138,12 @@ while not done:
 	# begin drawing code -----------------------------
 	drawChar(x,y)
 	drawGhosts()
+	drawPellets()
 	# update screen with drawings
 	pygame.display.flip()
 
 	# limit framerate to 60fps
-	clock.tick(60)
+	clock.tick(30)
 
 # close window and quit
 pygame.quit()
