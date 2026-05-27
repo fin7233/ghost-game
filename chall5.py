@@ -33,6 +33,7 @@ PINK  = ( 255, 182, 193 )
 LeftArrow=RightArrow=UpArrow=DownArrow=0
 x = y = 300
 speed = 8
+score = 0
 # loop until closed by user
 done = False
 # begin function definitions --------------------
@@ -46,8 +47,14 @@ def drawChar(x,y):
 	pygame.draw.circle(screen, RED, (x,y), 40, 0)
 
 def drawPellets():
+	global score
 	for i in pellets:
 		pygame.draw.circle(screen,BLUE, i, 10,0)
+		if arbitraryCollisionCheck((x,y),i,40,10):
+			i[0],i[1] = randScreenPos(5,5)
+			score += 1
+			print(f"score: {score}")
+
 
 
 def drawGhosts():
@@ -66,7 +73,27 @@ def drawGhosts():
 			i[1] -= ghostSpeedY
 		pygame.draw.circle(screen,GREEN, (i[0],i[1]),30,0)
 
-
+def arbitraryCollisionCheck(obj1,obj2,obj1Rad,obj2Rad):
+	"""
+	checks for collision between two objects
+	inputs:
+		obj1: tuple of (object1X,object1Y) (object center)
+		obj2: tuple of (object2X,object2Y) (object center)
+		obj1Rad: radius of object 1
+		obj2Rad: radius of object 2
+	returns: 
+		True if collision is true, otherwise returns False
+	"""
+	if (
+		obj1[0] + obj1Rad >= obj2[0] - obj2Rad and
+		obj1[0] - obj1Rad <= obj2[0] + obj2Rad and
+		obj1[1] + obj1Rad >= obj2[1] - obj2Rad and
+		obj1[1] - obj1Rad <= obj2[1] + obj2Rad
+	):
+		return True
+	else:
+		return False
+	
 
 ghosts = []
 for i in range (5):
